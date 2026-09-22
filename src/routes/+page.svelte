@@ -345,8 +345,8 @@
   .weather-app {
     position: relative;
     min-height: 100vh;
-    overflow: hidden;
-    padding: 1.5rem;
+    overflow-x: hidden;
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
     background: #dcecf7;
     transition: background 0.7s ease;
   }
@@ -589,6 +589,8 @@
     max-width: 52.9rem;
     margin-top: 1rem;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 
   .forecast-table-wrapper table {
@@ -651,5 +653,83 @@
   .weather-app td {
     font-weight: 600;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+
+  @media (max-width: 640px) {
+    .weather-app {
+      padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+    }
+
+    .location-controls {
+      align-items: stretch;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .location-controls form,
+    .location-form {
+      width: 100%;
+    }
+
+    .location-form input {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .location-form button,
+    .location-button {
+      white-space: nowrap;
+    }
+
+    .location-button {
+      width: 100%;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+    }
+
+    .day-selector {
+      max-width: none;
+      flex-wrap: nowrap;
+      margin-right: -0.75rem;
+      padding-right: 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .day-pill {
+      flex: 0 0 5.8rem;
+      width: 5.8rem;
+      min-height: 7.2rem;
+      scroll-snap-align: start;
+    }
+
+    .day-label {
+      font-size: 0.78rem;
+    }
+
+    .day-icon {
+      font-size: 1.75rem;
+    }
+
+    .forecast-table-wrapper {
+      width: calc(100vw - 1.5rem);
+      max-width: none;
+      margin-right: 0;
+      padding-bottom: 0.4rem;
+    }
+
+    .forecast-table-wrapper table {
+      min-width: 720px;
+      font-size: 0.82rem;
+    }
+
+    .forecast-table-wrapper th,
+    .forecast-table-wrapper td {
+      padding: 0.55rem !important;
+      white-space: nowrap;
+    }
   }
 </style>
