@@ -293,6 +293,7 @@
           </button>
         {/each}
       </div>
+      <p class="swipe-hint">Scorri le schede per vedere gli altri giorni</p>
 
       <div class="forecast-table-wrapper">
         <table>
@@ -338,6 +339,7 @@
           </tbody>
         </table>
       </div>
+      <p class="swipe-hint table-hint">Scorri la tabella lateralmente per vedere tutti i dati</p>
     </section>
   {/if}
 </div>
@@ -599,6 +601,25 @@
     border-collapse: collapse;
   }
 
+  .forecast-table-wrapper th:first-child,
+  .forecast-table-wrapper td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .forecast-table-wrapper th:first-child {
+    z-index: 2;
+  }
+
+  .swipe-hint {
+    display: none;
+    margin: -0.5rem 0 0.8rem;
+    color: #38566a;
+    font-size: 0.75rem;
+  }
+
   .day-pill:hover {
     background: #eaeaea;
   }
@@ -699,10 +720,18 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    .swipe-hint {
+      display: block;
+    }
+
+    .table-hint {
+      margin-top: 0.35rem;
+    }
+
     .day-pill {
-      flex: 0 0 5.8rem;
-      width: 5.8rem;
-      min-height: 7.2rem;
+      flex: 0 0 5.35rem;
+      width: 5.35rem;
+      min-height: 6.8rem;
       scroll-snap-align: start;
     }
 
@@ -711,7 +740,7 @@
     }
 
     .day-icon {
-      font-size: 1.75rem;
+      font-size: 1.6rem;
     }
 
     .forecast-table-wrapper {
@@ -722,8 +751,8 @@
     }
 
     .forecast-table-wrapper table {
-      min-width: 720px;
-      font-size: 0.82rem;
+      min-width: 680px;
+      font-size: 0.78rem;
     }
 
     .forecast-table-wrapper th,
