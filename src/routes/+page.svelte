@@ -14,7 +14,6 @@
 
   type DailyForecast = {
     day: string;
-    icon: string;
     condition: WeatherCondition;
     minTemperature: number;
     maxTemperature: number;
@@ -174,7 +173,6 @@
 
     return {
       day: `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}. ${date}`,
-      icon: iconForCondition(condition),
       condition,
       minTemperature: Math.min(...hours.map((hour) => hour.temperature)),
       maxTemperature: Math.max(...hours.map((hour) => hour.temperature))
@@ -196,29 +194,6 @@
       year: 'numeric'
     }).format(value);
     return label.charAt(0).toUpperCase() + label.slice(1);
-  }
-
-  // Icone meteo basate sulla condizione normalizzata dai provider.
-  function iconFor(h: WeatherPoint): string {
-    const icons: Record<WeatherCondition, string> = {
-      clear: '☀️',
-      cloudy: '☁️',
-      rain: '🌧️',
-      storm: '⛈️',
-      snow: '❄️'
-    };
-    return icons[h.condition];
-  }
-
-  function iconForCondition(condition: WeatherCondition): string {
-    return iconFor({
-      time: '',
-      temperature: 0,
-      precip: 0,
-      windSpeed: 0,
-      windDir: 0,
-      condition
-    });
   }
 
   // ⭐ Colore dinamico temperatura
@@ -248,12 +223,10 @@
   }
 
   // Freccia della direzione del vento, arrotondata ai punti cardinali.
-  function windArrow(dir: number): string {
-    const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
+  function windArrowRotation(dir: number): number {
     // I provider indicano da dove arriva il vento; la freccia mostra dove va.
     const normalizedDirection = (((dir + 180) % 360) + 360) % 360;
-    const arrowIndex = Math.round(normalizedDirection / 45) % arrows.length;
-    return arrows[arrowIndex];
+    return normalizedDirection - 90;
   }
 </script>
 
@@ -311,7 +284,7 @@
             onclick={() => (selectedDay = d)}
           >
             <span class="day-label">{summary.day}</span>
-            <span class="day-icon" aria-hidden="true">{summary.icon}</span>
+            <span class="weather-icon weather-icon-{summary.condition}" aria-hidden="true"></span>
             <span class="day-temperatures">
               <strong>{Math.round(summary.maxTemperature)}°</strong>
               <span>{Math.round(summary.minTemperature)}°</span>
@@ -342,7 +315,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  {iconFor(h)}
+                  <span class="weather-icon weather-icon-{h.condition}" aria-label={h.condition}></span>
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">
@@ -358,7 +331,8 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  {windArrow(h.windDir)} {Math.round(h.windDir)}°
+                  <span class="wind-arrow" style={`transform: rotate(${windArrowRotation(h.windDir)}deg)`} aria-hidden="true"></span>
+                  {Math.round(h.windDir)}°
                 </td>
               </tr>
             {/each}
@@ -691,8 +665,9 @@
 
   .day-icon {
     align-self: center;
-    font-size: 2rem;
-    line-height: 1;
+    display: grid;
+    place-items: center;
+    min-height: 2.5rem;
   }
 
   .day-temperatures {
@@ -708,6 +683,90 @@
 
   .day-pill.active .day-temperatures span {
     color: #e5efff;
+  }
+
+  .weather-icon {
+    position: relative;
+    display: inline-block;
+    width: 2.15rem;
+    height: 2rem;
+    vertical-align: middle;
+  }
+
+  .weather-icon-clear::before {
+    position: absolute;
+    content: '';
+    inset: 0.42rem;
+    border-radius: 50%;
+    background: #f9b51a;
+    box-shadow: 0 0 0 0.16rem #f59e0b, 0 0 0 0.34rem rgba(245, 158, 11, 0.22);
+  }
+
+  .weather-icon-clear::after {
+    position: absolute;
+    content: '✦';
+    inset: -0.1rem 0 0;
+    color: #f59e0b;
+    font-size: 1.1rem;
+    line-height: 2rem;
+    text-align: center;
+  }
+
+  .weather-icon-cloudy::before,
+  .weather-icon-rain::before,
+  .weather-icon-storm::before,
+  .weather-icon-snow::before {
+    position: absolute;
+    content: '';
+    right: 0.05rem;
+    bottom: 0.22rem;
+    width: 1.65rem;
+    height: 0.7rem;
+    border-radius: 0.7rem;
+    background: #b9c5d5;
+    box-shadow: -0.62rem 0.08rem 0 -0.08rem #d9e1eb, -0.28rem -0.38rem 0 -0.02rem #d9e1eb;
+  }
+
+  .weather-icon-rain::after {
+    position: absolute;
+    content: '⋮ ⋮';
+    right: 0.22rem;
+    bottom: -0.45rem;
+    color: #2384c6;
+    font-size: 1.2rem;
+    letter-spacing: 0.18rem;
+    transform: rotate(18deg);
+  }
+
+  .weather-icon-storm::after {
+    position: absolute;
+    content: '⚡';
+    right: 0.28rem;
+    bottom: -0.38rem;
+    color: #f2a900;
+    font-size: 1.2rem;
+  }
+
+  .weather-icon-snow::after {
+    position: absolute;
+    content: '·  ·';
+    right: 0.08rem;
+    bottom: -0.42rem;
+    color: #5ea7d8;
+    font-size: 1.45rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .wind-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-right: 0.35rem;
+    border-top: 0.38rem solid transparent;
+    border-bottom: 0.38rem solid transparent;
+    border-right: 0.85rem solid #0878d1;
+    vertical-align: middle;
+    transform-origin: 0.43rem 50%;
   }
 
   .weather-app table {
