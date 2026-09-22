@@ -148,7 +148,17 @@
   function filteredHours(): WeatherPoint[] {
     if (!data || !selectedDay) return [];
     const day = selectedDay;
-    return data.hourly.filter((h) => h.time.startsWith(day));
+    const hours = data.hourly.filter((h) => h.time.startsWith(day));
+    const now = new Date();
+    const today = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0')
+    ].join('-');
+
+    if (day !== today) return hours;
+
+    return hours.filter((hour) => Number(hour.time.slice(11, 13)) >= now.getHours());
   }
 
   function dailyForecast(day: string): DailyForecast {
