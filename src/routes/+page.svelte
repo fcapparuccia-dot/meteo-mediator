@@ -115,8 +115,23 @@
     loading = true;
     error = null;
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        void loadForecast(`/api/forecast?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const response = await fetch(`/api/locations/reverse?lat=${latitude}&lon=${longitude}`);
+          if (response.ok) {
+            const location = await response.json() as { name?: string; region?: string };
+            city = [location.name, location.region].filter(Boolean).join(', ') || 'Posizione attuale';
+          } else {
+            city = 'Posizione attuale';
+          }
+        } catch {
+          city = 'Posizione attuale';
+        }
+
+        suggestions = [];
+        await loadForecast(`/api/forecast?lat=${latitude}&lon=${longitude}`);
       },
       () => {
         loading = false;
@@ -225,7 +240,8 @@
   // Freccia della direzione del vento, arrotondata ai punti cardinali.
   function windArrow(dir: number): string {
     const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
-    const normalizedDirection = ((dir % 360) + 360) % 360;
+    // I provider indicano da dove arriva il vento; la freccia mostra dove va.
+    const normalizedDirection = (((dir + 180) % 360) + 360) % 360;
     const arrowIndex = Math.round(normalizedDirection / 45) % arrows.length;
     return arrows[arrowIndex];
   }
@@ -304,7 +320,7 @@
               <th style="padding: 8px; border-bottom: 1px solid #ccc;">Temp (°C)</th>
               <th style="padding: 8px; border-bottom: 1px solid #ccc;">Precip (%)</th>
               <th style="padding: 8px; border-bottom: 1px solid #ccc;">Vento (km/h)</th>
-              <th style="padding: 8px; border-bottom: 1px solid #ccc;">Direzione</th>
+              <th style="padding: 8px; border-bottom: 1px solid #ccc;">Vento da</th>
             </tr>
           </thead>
 

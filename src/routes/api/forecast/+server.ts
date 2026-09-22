@@ -32,13 +32,13 @@ function weightedWindDirection(sources: ForecastSource[], getDirection: (source:
   const vector = sources.reduce(
     (result, source) => {
       const radians = getDirection(source) * Math.PI / 180;
-      result.x += Math.cos(radians) * source.weight;
-      result.y += Math.sin(radians) * source.weight;
+      result.x += Math.sin(radians) * source.weight;
+      result.y += Math.cos(radians) * source.weight;
       return result;
     },
     { x: 0, y: 0 }
   );
-  return (Math.atan2(vector.y, vector.x) * 180 / Math.PI + 360) % 360;
+  return (Math.atan2(vector.x, vector.y) * 180 / Math.PI + 360) % 360;
 }
 
 function weightedCondition(items: { condition: WeatherCondition; weight: number }[]): WeatherCondition {
