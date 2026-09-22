@@ -9,7 +9,9 @@ function conditionFromCode(code: number): 'clear' | 'cloudy' | 'rain' | 'storm' 
 export async function fetchOpenMeteo(lat: number, lon: number) {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-    `&hourly=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,weather_code`;
+    `&current=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,weather_code` +
+    `&hourly=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,weather_code` +
+    `&forecast_days=7&timezone=auto`;
 
   const res = await fetch(url);
   const data = await res.json();
@@ -27,11 +29,11 @@ export async function fetchOpenMeteo(lat: number, lon: number) {
   return {
     source: 'Open-Meteo',
     current: {
-      temperature: hourly[0].temperature,
-      precip: hourly[0].precip,
-      windSpeed: hourly[0].windSpeed,
-      windDir: hourly[0].windDir,
-      condition: hourly[0].condition
+      temperature: data.current.temperature_2m,
+      precip: data.current.precipitation_probability,
+      windSpeed: data.current.wind_speed_10m,
+      windDir: data.current.wind_direction_10m,
+      condition: conditionFromCode(data.current.weather_code)
     },
     hourly,
     weight: 0.4

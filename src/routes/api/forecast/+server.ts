@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import { fetchOpenMeteo } from '$lib/fetchers/openmeteo';
 import { fetchWeatherAPI } from '$lib/fetchers/weatherapi';
-import { fetchMeteoAM } from '$lib/fetchers/meteoam';
 
 type ForecastHour = {
   time: string;
@@ -100,11 +99,10 @@ export async function GET({ url }: RequestEvent) {
 
     const results = await Promise.allSettled([
       fetchOpenMeteo(lat, lon),
-      fetchWeatherAPI(lat, lon),
-      fetchMeteoAM(lat, lon) // ⭐ MOCK, NON FA FETCH
+      fetchWeatherAPI(lat, lon)
     ]);
 
-    const sourceNames = ['Open-Meteo', 'WeatherAPI', 'MeteoAM'];
+    const sourceNames = ['Open-Meteo', 'WeatherAPI'];
     const sources: ForecastSource[] = results.flatMap((result, index) => {
       if (result.status === 'fulfilled') return [result.value];
 

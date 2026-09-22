@@ -14,20 +14,21 @@ export async function fetchWeatherAPI(lat: number, lon: number) {
 
   const res = await fetch(url);
   const data = await res.json();
-
-  const hour = data.forecast.forecastday[0].hour[0];
+  const forecastHours = data.forecast.forecastday.flatMap((day: any) => day.hour);
+  const currentHour = forecastHours.find((hour: any) =>
+    hour.time.slice(0, 13) === data.location.localtime.slice(0, 13)
+  ) ?? forecastHours[0];
 
   return {
     source: 'WeatherAPI',
     current: {
-      temperature: hour.temp_c,
-      precip: hour.chance_of_rain,
-      windSpeed: hour.wind_kph,
-      windDir: hour.wind_degree,
-      condition: conditionFromCode(hour.condition.code)
+      temperature: data.current.temp_c,
+      precip: currentHour.chance_of_rain,
+      windSpeed: data.current.wind_kph,
+      windDir: data.current.wind_degree,
+      condition: conditionFromCode(data.current.condition.code)
     },
-    hourly: data.forecast.forecastday.flatMap((day: any) =>
-      day.hour.map((h: any) => ({
+    hourly: forecastHours.map((h: any) => ({
         time: h.time,
         temperature: h.temp_c,
         precip: h.chance_of_rain,
@@ -35,8 +36,7 @@ export async function fetchWeatherAPI(lat: number, lon: number) {
         windDir: h.wind_degree,
         condition: conditionFromCode(h.condition.code),
         weight: 1
-      }))
-    ),
+    })),
     weight: 0.4
   };
 }
