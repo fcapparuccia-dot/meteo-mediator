@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
+	let currentPath = $derived(page.url.pathname);
 
 	onMount(() => {
 		if (!browser || !('serviceWorker' in navigator)) return;
@@ -26,9 +28,9 @@
 </svelte:head>
 
 <nav class="site-nav" aria-label="Navigazione principale">
-	<a href="/">Previsioni</a>
-	<a href="/mappe">Mappe meteo</a>
-	<a href="/modelli">Modello previsionale</a>
+	<a href="/" class:active={currentPath === '/'} aria-current={currentPath === '/' ? 'page' : undefined}>Previsioni</a>
+	<a href="/mappe" class:active={currentPath.startsWith('/mappe')} aria-current={currentPath.startsWith('/mappe') ? 'page' : undefined}>Mappe meteo</a>
+	<a href="/modelli" class:active={currentPath.startsWith('/modelli')} aria-current={currentPath.startsWith('/modelli') ? 'page' : undefined}>Modello previsionale</a>
 </nav>
 
 {@render children()}
@@ -50,7 +52,8 @@
 	}
 
 	.site-nav a:hover,
-	.site-nav a:focus-visible {
+	.site-nav a:focus-visible,
+	.site-nav a.active {
 		background: #0878b5;
 	}
 </style>
