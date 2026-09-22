@@ -758,15 +758,26 @@
   }
 
   .wind-arrow {
+    position: relative;
     display: inline-block;
-    width: 0;
-    height: 0;
+    width: 1.35rem;
+    height: 0.2rem;
     margin-right: 0.35rem;
+    border-radius: 0.2rem;
+    background: #0878d1;
+    vertical-align: middle;
+    transform-origin: 50% 50%;
+  }
+
+  .wind-arrow::after {
+    position: absolute;
+    top: 50%;
+    right: -0.05rem;
+    content: '';
     border-top: 0.38rem solid transparent;
     border-bottom: 0.38rem solid transparent;
-    border-right: 0.85rem solid #0878d1;
-    vertical-align: middle;
-    transform-origin: 0.43rem 50%;
+    border-left: 0.52rem solid #0878d1;
+    transform: translateY(-50%);
   }
 
   .weather-app table {
