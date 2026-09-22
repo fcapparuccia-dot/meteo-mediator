@@ -28,6 +28,7 @@
 <nav class="site-nav" aria-label="Navigazione principale">
 	<a href="/">Previsioni</a>
 	<a href="/mappe">Mappe meteo</a>
+	<a href="/modelli">Modello previsionale</a>
 </nav>
 
 {@render children()}
