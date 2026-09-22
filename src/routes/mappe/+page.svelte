@@ -22,15 +22,9 @@
 <div class="maps-page">
   <header class="maps-header">
     <div>
-      <p class="eyebrow">Meteo Mediator</p>
       <h1>Mappe meteo</h1>
-      <p class="intro">
-        Situazione osservata dal satellite e precipitazioni previste nelle prossime ore.
-      </p>
     </div>
-    <button type="button" class="refresh-button" onclick={refreshMaps}>
-      Aggiorna mappe
-    </button>
+    <button type="button" class="refresh-button" onclick={refreshMaps}>Aggiorna</button>
   </header>
 
   <main class="map-grid">
@@ -38,7 +32,6 @@
       <div class="panel-heading">
         <div>
           <h2>Meteosat</h2>
-          <p>Immagine satellitare della copertura nuvolosa osservata.</p>
         </div>
         <a href={satelliteUrl} target="_blank" rel="noreferrer">Apri fonte</a>
       </div>
@@ -55,7 +48,6 @@
       <div class="panel-heading">
         <div>
           <h2>Radar predittivo</h2>
-          <p>Animazione della situazione e dell'evoluzione delle precipitazioni.</p>
         </div>
         <a href={radarUrl} target="_blank" rel="noreferrer">Apri fonte</a>
       </div>
@@ -106,15 +98,6 @@
     margin-bottom: 1.5rem;
   }
 
-  .eyebrow {
-    margin: 0 0 0.35rem;
-    color: #0878b5;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
   h1,
   h2,
   p {
@@ -125,13 +108,6 @@
     margin-bottom: 0.35rem;
     color: #12354a;
     font-size: clamp(2rem, 5vw, 3.5rem);
-  }
-
-  .intro {
-    max-width: 42rem;
-    margin-bottom: 0;
-    color: #38566a;
-    font-size: 1.05rem;
   }
 
   .refresh-button,
@@ -176,12 +152,6 @@
     margin-bottom: 0.25rem;
     color: #12354a;
     font-size: 1.35rem;
-  }
-
-  .panel-heading p {
-    margin-bottom: 0;
-    color: #527084;
-    font-size: 0.9rem;
   }
 
   .panel-heading a {
