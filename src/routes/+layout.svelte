@@ -25,4 +25,31 @@
 	<meta name="theme-color" content="#1683c4" />
 </svelte:head>
 
+<nav class="site-nav" aria-label="Navigazione principale">
+	<a href="/">Previsioni</a>
+	<a href="/mappe">Mappe meteo</a>
+</nav>
+
 {@render children()}
+
+<style>
+	.site-nav {
+		display: flex;
+		gap: 0.5rem;
+		padding: 0.65rem 1rem;
+		background: #12354a;
+	}
+
+	.site-nav a {
+		padding: 0.45rem 0.7rem;
+		border-radius: 5px;
+		color: white;
+		font: 600 0.9rem/1.2 system-ui, sans-serif;
+		text-decoration: none;
+	}
+
+	.site-nav a:hover,
+	.site-nav a:focus-visible {
+		background: #0878b5;
+	}
+</style>
