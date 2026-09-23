@@ -64,6 +64,7 @@
   let data = $state<ForecastData | null>(null);
   let days = $state<string[]>([]);
   let selectedDay = $state<string | null>(null);
+  let isPwa = $state(false);
   let showHourly = $state(false);
   let error = $state<string | null>(null);
   let city = $state('Pisa');
@@ -139,7 +140,7 @@
 
       days = Array.from(uniqueDays);
       selectedDay = days[0] ?? null;
-      showHourly = false;
+      showHourly = !isPwa;
     } catch {
       error = 'Non è stato possibile caricare la previsione.';
     } finally {
@@ -234,6 +235,8 @@
   }
 
   onMount(() => {
+    isPwa = window.matchMedia('(display-mode: standalone)').matches
+      || ('standalone' in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
     void loadForecast('/api/forecast?city=Pisa');
   });
 
@@ -386,7 +389,7 @@
               showHourly = true;
             }}
           >
-            <span class="day-label">{dayLabel(d, index)}</span>
+            <span class="day-label">{isPwa ? dayLabel(d, index) : summary.day}</span>
             <span class="weather-icon" aria-hidden="true">{@html weatherIcon(summary.condition, summary.maxTemperature)}</span>
             <span class="day-temperatures">
               <strong>{Math.round(summary.maxTemperature)}°</strong>
@@ -401,7 +404,9 @@
 
       {#if showHourly}
         <div id="hourly-forecast" class="hourly-forecast">
-          <h3>Previsione oraria: {selectedDay ? dayLabel(selectedDay, days.indexOf(selectedDay)) : ''}</h3>
+          {#if isPwa}
+            <h3>Previsione oraria: {selectedDay ? dayLabel(selectedDay, days.indexOf(selectedDay)) : ''}</h3>
+          {/if}
           <div class="forecast-table-wrapper">
         <table>
           <thead>
@@ -670,24 +675,21 @@
   }
 
   .day-selector {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.5rem;
+    display: flex;
+    gap: 0.65rem;
     margin: 1rem 0;
-    width: 100%;
+    flex-wrap: wrap;
     max-width: 52.9rem;
   }
 
   .day-pill {
     appearance: none;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 3rem minmax(6rem, 1fr);
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    min-width: 0;
-    min-height: 4.5rem;
-    padding: 0.55rem 1rem;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.35rem;
+    width: 7rem;
+    min-height: 8rem;
+    padding: 0.65rem 0.5rem;
     border-radius: 8px;
     border: 1px solid #2d5271;
     font: inherit;
@@ -709,6 +711,7 @@
   }
 
   .hourly-forecast h3 {
+    display: none;
     margin: 1.5rem 0 0.75rem;
     color: #12354a;
     font-size: 1rem;
@@ -730,9 +733,7 @@
   }
 
   .forecast-table-wrapper th {
-    white-space: normal;
-    line-height: 1.15;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
   }
 
   .forecast-table-wrapper th:nth-child(1),
@@ -774,6 +775,7 @@
   }
 
   .day-selection-hint {
+    display: none;
     margin: 0.75rem 0 1rem;
     color: #38566a;
     font-size: 0.85rem;
@@ -792,8 +794,8 @@
   }
 
   .day-label {
-    font-size: 1rem;
-    text-align: left;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .day-icon {
@@ -808,8 +810,6 @@
     justify-content: center;
     gap: 0.55rem;
     font-size: 0.9rem;
-    white-space: nowrap;
-    text-align: right;
   }
 
   .day-temperatures span {
@@ -928,8 +928,12 @@
     }
 
     .day-selector {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0.4rem;
+      flex-wrap: nowrap;
+      margin-right: -0.75rem;
+      padding-right: 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
       max-width: none;
     }
 
@@ -942,9 +946,10 @@
     }
 
     .day-pill {
-      width: 100%;
-      min-height: 4.25rem;
-      padding: 0.45rem 0.75rem;
+      flex: 0 0 5.35rem;
+      width: 5.35rem;
+      min-height: 6.8rem;
+      scroll-snap-align: start;
     }
 
     .day-label {
@@ -987,6 +992,44 @@
 
     .location-form input {
       min-width: 0;
+    }
+
+    .day-selector {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.4rem;
+      width: 100%;
+      margin-right: 0;
+      padding-right: 0;
+      overflow-x: visible;
+      max-width: none;
+    }
+
+    .day-pill {
+      grid-template-columns: minmax(0, 1fr) 3rem minmax(6rem, 1fr);
+      grid-template-rows: 1fr;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      min-width: 0;
+      min-height: 4.25rem;
+      padding: 0.45rem 0.75rem;
+    }
+
+    .day-label {
+      font-size: 0.9rem;
+      text-align: left;
+      white-space: normal;
+    }
+
+    .day-temperatures {
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .day-selection-hint,
+    .hourly-forecast h3 {
+      display: block;
     }
 
     .forecast-table-wrapper {
