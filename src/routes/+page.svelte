@@ -84,8 +84,8 @@
   }
 
   function rainIconForProbability(precip: number): string {
-    if (precip <= 10) return rainCloudOneIcon;
-    if (precip <= 20) return rainCloudTwoIcon;
+    if (precip <= 40) return rainCloudOneIcon;
+    if (precip <= 60) return rainCloudTwoIcon;
     return rainCloudThreeIcon;
   }
 
