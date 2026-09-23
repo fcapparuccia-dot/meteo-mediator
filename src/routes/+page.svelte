@@ -152,6 +152,20 @@
     if (query) void loadForecast(`/api/forecast?city=${encodeURIComponent(query)}`);
   }
 
+  function suggestionLabel(suggestion: CitySuggestion): string {
+    return [suggestion.name, suggestion.region, suggestion.country].filter(Boolean).join(', ');
+  }
+
+  function selectSuggestedCity(event: Event): void {
+    const query = (event.currentTarget as HTMLInputElement).value.trim();
+    const selectedSuggestion = suggestions.find((suggestion) => suggestionLabel(suggestion) === query);
+    if (!selectedSuggestion) return;
+
+    city = query;
+    suggestions = [];
+    void loadForecast(`/api/forecast?city=${encodeURIComponent(query)}`);
+  }
+
   async function updateSuggestions(event: Event): Promise<void> {
     const query = (event.currentTarget as HTMLInputElement).value.trim();
     city = query;
@@ -316,13 +330,14 @@
           value={city}
           onclick={selectCityText}
           oninput={updateSuggestions}
+          onchange={selectSuggestedCity}
           list="city-suggestions"
           placeholder="Es. Roma"
           autocomplete="off"
         />
         <datalist id="city-suggestions">
           {#each suggestions as suggestion (suggestion.id)}
-            <option value={[suggestion.name, suggestion.region, suggestion.country].filter(Boolean).join(', ')}></option>
+            <option value={suggestionLabel(suggestion)}></option>
           {/each}
         </datalist>
         <button type="submit" disabled={loading}>Cerca</button>
