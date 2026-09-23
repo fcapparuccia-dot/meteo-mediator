@@ -19,6 +19,13 @@ type ForecastSource = {
   current: Omit<ForecastHour, 'time'>;
   hourly: ForecastHour[];
   weight: number;
+  sunTimes?: SunTimes[];
+};
+
+type SunTimes = {
+  date: string;
+  sunrise: string;
+  sunset: string;
 };
 
 function weightedAverage(values: { value: number; weight: number }[]): number {
@@ -175,6 +182,7 @@ export async function GET({ url }: RequestEvent) {
       windSpeed,
       windDir,
       condition: currentCondition,
+      sunTimes: sources.find((source) => source.sunTimes)?.sunTimes ?? [],
       sources,
       hourly
     });

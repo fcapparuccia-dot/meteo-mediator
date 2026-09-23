@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import clearIcon from '@bybas/weather-icons/production/fill/all/clear-day.svg?raw';
+  import clearNightIcon from '@bybas/weather-icons/production/fill/all/clear-night.svg?raw';
   import cloudyIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-day.svg?raw';
+  import cloudyNightIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-night.svg?raw';
   import rainIcon from '@bybas/weather-icons/production/fill/all/rain.svg?raw';
   import snowIcon from '@bybas/weather-icons/production/fill/all/snow.svg?raw';
   import stormIcon from '@bybas/weather-icons/production/fill/all/thunderstorms.svg?raw';
@@ -15,6 +17,12 @@
     windSpeed: number;
     windDir: number;
     condition: WeatherCondition;
+  };
+
+  type SunTimes = {
+    date: string;
+    sunrise: string;
+    sunset: string;
   };
 
   type DailyForecast = {
@@ -37,6 +45,7 @@
     precip: number;
     windSpeed: number;
     windDir: number;
+    sunTimes: SunTimes[];
     sources: WeatherSource[];
     hourly: WeatherPoint[];
   };
@@ -65,7 +74,14 @@
     snow: snowIcon
   };
 
-  function weatherIcon(condition: WeatherCondition, temperature: number): string {
+  function isNight(time: string): boolean {
+    const sun = data?.sunTimes.find((item) => item.date === time.slice(0, 10));
+    return Boolean(sun && (time < sun.sunrise || time >= sun.sunset));
+  }
+
+  function weatherIcon(condition: WeatherCondition, temperature: number, night = false): string {
+    if (night && condition === 'clear') return clearNightIcon;
+    if (night && condition === 'cloudy') return cloudyNightIcon;
     if (condition !== 'clear' && condition !== 'cloudy') return weatherIcons[condition];
 
     const colors = temperature <= 5
@@ -349,7 +365,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  <span class="weather-icon table-weather-icon" role="img" aria-label={h.condition}>{@html weatherIcon(h.condition, h.temperature)}</span>
+                  <span class="weather-icon table-weather-icon" role="img" aria-label={h.condition}>{@html weatherIcon(h.condition, h.temperature, isNight(h.time))}</span>
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">

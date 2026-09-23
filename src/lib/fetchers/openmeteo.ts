@@ -11,6 +11,7 @@ export async function fetchOpenMeteo(lat: number, lon: number) {
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,weather_code` +
     `&hourly=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,weather_code` +
+    `&daily=sunrise,sunset` +
     `&forecast_days=7&timezone=auto`;
 
   const res = await fetch(url);
@@ -28,6 +29,11 @@ export async function fetchOpenMeteo(lat: number, lon: number) {
 
   return {
     source: 'Open-Meteo',
+    sunTimes: data.daily.time.map((date: string, i: number) => ({
+      date,
+      sunrise: data.daily.sunrise[i],
+      sunset: data.daily.sunset[i]
+    })),
     current: {
       temperature: data.current.temperature_2m,
       precip: data.current.precipitation_probability,
