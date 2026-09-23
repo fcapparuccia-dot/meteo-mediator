@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import clearIcon from '@bybas/weather-icons/production/fill/all/clear-day.svg';
-  import cloudyIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-day.svg';
-  import rainIcon from '@bybas/weather-icons/production/fill/all/rain.svg';
-  import snowIcon from '@bybas/weather-icons/production/fill/all/snow.svg';
-  import stormIcon from '@bybas/weather-icons/production/fill/all/thunderstorms.svg';
+  import clearIcon from '@bybas/weather-icons/production/fill/all/clear-day.svg?raw';
+  import cloudyIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-day.svg?raw';
+  import rainIcon from '@bybas/weather-icons/production/fill/all/rain.svg?raw';
+  import snowIcon from '@bybas/weather-icons/production/fill/all/snow.svg?raw';
+  import stormIcon from '@bybas/weather-icons/production/fill/all/thunderstorms.svg?raw';
 
   type WeatherCondition = 'clear' | 'cloudy' | 'rain' | 'storm' | 'snow';
 
@@ -65,8 +65,21 @@
     snow: snowIcon
   };
 
-  function weatherIcon(condition: WeatherCondition): string {
-    return weatherIcons[condition];
+  function weatherIcon(condition: WeatherCondition, temperature: number): string {
+    if (condition !== 'clear' && condition !== 'cloudy') return weatherIcons[condition];
+
+    const warmth = Math.max(0, Math.min(1, (temperature + 5) / 40));
+    const hue = Math.round(52 - warmth * 44);
+    const colors = {
+      main: `hsl(${hue} 96% 55%)`,
+      highlight: `hsl(${hue} 96% 62%)`,
+      edge: `hsl(${hue} 88% 49%)`
+    };
+
+    return weatherIcons[condition]
+      .replaceAll('#fbbf24', colors.main)
+      .replaceAll('#f59e0b', colors.highlight)
+      .replaceAll('#f8af18', colors.edge);
   }
 
   async function loadForecast(endpoint: string): Promise<void> {
@@ -301,7 +314,7 @@
             onclick={() => (selectedDay = d)}
           >
             <span class="day-label">{summary.day}</span>
-            <img class="weather-icon" src={weatherIcon(summary.condition)} alt="" aria-hidden="true" />
+            <span class="weather-icon" aria-hidden="true">{@html weatherIcon(summary.condition, summary.maxTemperature)}</span>
             <span class="day-temperatures">
               <strong>{Math.round(summary.maxTemperature)}°</strong>
               <span>{Math.round(summary.minTemperature)}°</span>
@@ -332,7 +345,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  <img class="weather-icon table-weather-icon" src={weatherIcon(h.condition)} alt={h.condition} />
+                  <span class="weather-icon table-weather-icon" role="img" aria-label={h.condition}>{@html weatherIcon(h.condition, h.temperature)}</span>
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">
@@ -710,6 +723,12 @@
     height: 2.5rem;
     vertical-align: middle;
     object-fit: contain;
+  }
+
+  .weather-icon :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .table-weather-icon {
