@@ -68,13 +68,17 @@
   function weatherIcon(condition: WeatherCondition, temperature: number): string {
     if (condition !== 'clear' && condition !== 'cloudy') return weatherIcons[condition];
 
-    const warmth = Math.max(0, Math.min(1, (temperature + 5) / 40));
-    const hue = Math.round(52 - warmth * 44);
-    const colors = {
-      main: `hsl(${hue} 96% 55%)`,
-      highlight: `hsl(${hue} 96% 62%)`,
-      edge: `hsl(${hue} 88% 49%)`
-    };
+    const colors = temperature <= 5
+      ? { main: '#b8e7ff', highlight: '#e7f8ff', edge: '#78c9ef' }
+      : temperature <= 10
+        ? { main: '#f9e889', highlight: '#fff6b0', edge: '#dfcf61' }
+        : temperature <= 15
+          ? { main: '#f6dc4d', highlight: '#ffe875', edge: '#d4b72d' }
+          : temperature <= 25
+            ? { main: '#fbbf24', highlight: '#f59e0b', edge: '#f8af18' }
+            : temperature <= 30
+              ? { main: '#fb923c', highlight: '#f97316', edge: '#ea580c' }
+              : { main: '#ef4444', highlight: '#f87171', edge: '#b91c1c' };
 
     return weatherIcons[condition]
       .replaceAll('#fbbf24', colors.main)
