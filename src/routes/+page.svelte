@@ -168,6 +168,15 @@
 
   async function updateSuggestions(event: Event): Promise<void> {
     const query = (event.currentTarget as HTMLInputElement).value.trim();
+    const selectedSuggestion = suggestions.find((suggestion) => suggestionLabel(suggestion) === query);
+
+    if (selectedSuggestion) {
+      city = query;
+      suggestions = [];
+      void loadForecast(`/api/forecast?city=${encodeURIComponent(query)}`);
+      return;
+    }
+
     city = query;
     suggestions = [];
     if (query.length < 2) return;
