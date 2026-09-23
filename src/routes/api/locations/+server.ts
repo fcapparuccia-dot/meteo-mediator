@@ -8,7 +8,6 @@ export async function GET({ url }: { url: URL }) {
   geocodingUrl.searchParams.set('name', query);
   geocodingUrl.searchParams.set('count', '8');
   geocodingUrl.searchParams.set('language', 'it');
-  geocodingUrl.searchParams.set('countryCode', 'IT');
   geocodingUrl.searchParams.set('format', 'json');
 
   try {

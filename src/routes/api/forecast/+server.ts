@@ -73,9 +73,12 @@ async function resolveLocation(url: URL): Promise<{ lat: number; lon: number; na
     return { lat: 43.7167, lon: 10.3833, name: 'Pisa, Italia' };
   }
 
+  const cityParts = city.split(',').map((part) => part.trim()).filter(Boolean);
+  const cityName = cityParts[0] ?? city;
+  const countryName = cityParts.at(-1)?.toLocaleLowerCase('it-IT');
   const geocodingUrl = new URL('https://geocoding-api.open-meteo.com/v1/search');
-  geocodingUrl.searchParams.set('name', city);
-  geocodingUrl.searchParams.set('count', '1');
+  geocodingUrl.searchParams.set('name', cityName);
+  geocodingUrl.searchParams.set('count', '10');
   geocodingUrl.searchParams.set('language', 'it');
   geocodingUrl.searchParams.set('format', 'json');
 
@@ -83,7 +86,9 @@ async function resolveLocation(url: URL): Promise<{ lat: number; lon: number; na
   if (!response.ok) throw new Error('Servizio di ricerca città non disponibile');
 
   const result = await response.json();
-  const location = result.results?.[0];
+  const location = result.results?.find((candidate: { country?: string }) =>
+    countryName && candidate.country?.toLocaleLowerCase('it-IT') === countryName
+  ) ?? result.results?.[0];
   if (!location) throw new Error(`Città non trovata: ${city}`);
 
   return {
