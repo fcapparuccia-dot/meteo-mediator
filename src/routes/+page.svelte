@@ -83,15 +83,17 @@
     return Boolean(sun && (time < sun.sunrise || time >= sun.sunset));
   }
 
+  function rainIconForProbability(precip: number): string {
+    if (precip <= 20) return drizzleIcon;
+    if (precip <= 60) return raindropIcon;
+    return raindropsIcon;
+  }
+
   function weatherIcon(condition: WeatherCondition, temperature: number, night = false, precip = 0): string {
     if (night && condition === 'clear') return clearNightIcon;
     if (night && condition === 'cloudy') return cloudyNightIcon;
     if (condition === 'storm') return night ? stormNightIcon : stormIcon;
-    if (condition === 'rain') {
-      if (precip <= 20) return drizzleIcon;
-      if (precip <= 60) return raindropIcon;
-      return raindropsIcon;
-    }
+    if (condition === 'rain') return rainIconForProbability(precip);
     if (condition !== 'clear' && condition !== 'cloudy') return weatherIcons[condition];
 
     const colors = temperature <= 5
@@ -375,7 +377,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  <span class="weather-icon table-weather-icon" role="img" aria-label={h.condition}>{@html weatherIcon(h.condition, h.temperature, isNight(h.time), h.precip)}</span>
+                  <span class="weather-icon table-weather-icon" role="img" aria-label={`${h.condition}, probabilità di precipitazione ${h.precip}%`}>{@html weatherIcon(h.condition, h.temperature, isNight(h.time), h.precip)}</span>
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">
