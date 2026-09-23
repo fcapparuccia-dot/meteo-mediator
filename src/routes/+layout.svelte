@@ -56,4 +56,18 @@
 	.site-nav a.active {
 		background: #0878b5;
 	}
+
+	@media (display-mode: standalone) and (max-width: 700px) {
+		.site-nav {
+			gap: 0.15rem;
+			padding: 0.45rem 0.5rem;
+		}
+
+		.site-nav a {
+			flex: 1 1 0;
+			padding: 0.45rem 0.2rem;
+			font-size: 0.72rem;
+			text-align: center;
+		}
+	}
 </style>

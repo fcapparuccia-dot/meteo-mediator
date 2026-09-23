@@ -937,4 +937,71 @@
       white-space: nowrap;
     }
   }
+
+  @media (display-mode: standalone) and (max-width: 700px) {
+    .weather-app {
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .location-form {
+      gap: 0.35rem;
+    }
+
+    .location-form input {
+      min-width: 0;
+    }
+
+    .forecast-table-wrapper {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .forecast-table-wrapper table {
+      min-width: 0;
+      width: 100%;
+      font-size: 0.65rem;
+    }
+
+    .forecast-table-wrapper th,
+    .forecast-table-wrapper td {
+      padding: 0.35rem 0.15rem !important;
+      white-space: nowrap;
+    }
+
+    .forecast-table-wrapper th:nth-child(1),
+    .forecast-table-wrapper td:nth-child(1) { width: 13%; }
+
+    .forecast-table-wrapper th:nth-child(2),
+    .forecast-table-wrapper td:nth-child(2) { width: 16%; }
+
+    .forecast-table-wrapper th:nth-child(3),
+    .forecast-table-wrapper td:nth-child(3) { width: 17%; }
+
+    .forecast-table-wrapper th:nth-child(4),
+    .forecast-table-wrapper td:nth-child(4) { width: 17%; }
+
+    .forecast-table-wrapper th:nth-child(5),
+    .forecast-table-wrapper td:nth-child(5) { width: 18%; }
+
+    .forecast-table-wrapper th:nth-child(6),
+    .forecast-table-wrapper td:nth-child(6) { width: 19%; }
+
+    .table-weather-icon {
+      width: 1.7rem;
+      height: 1.7rem;
+    }
+
+    .wind-arrow {
+      width: 0.85rem;
+      margin-right: 0.1rem;
+    }
+
+    .wind-arrow::after {
+      border-top-width: 0.28rem;
+      border-bottom-width: 0.28rem;
+      border-left-width: 0.38rem;
+    }
+  }
 </style>
