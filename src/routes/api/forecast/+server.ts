@@ -54,12 +54,6 @@ function weightedCondition(items: { condition: WeatherCondition; weight: number 
   return [...scores.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'clear';
 }
 
-function conditionForProbability(condition: WeatherCondition, precip: number): WeatherCondition {
-  if (condition === 'storm' && precip < 40) return 'cloudy';
-  if (condition === 'rain' && precip < 20) return 'cloudy';
-  return condition;
-}
-
 function hourKey(time: string): string {
   return time.replace(' ', 'T').slice(0, 13);
 }
@@ -134,10 +128,10 @@ export async function GET({ url }: RequestEvent) {
       weight: source.weight
     })));
     const windDir = weightedWindDirection(sources, (source) => source.current.windDir);
-    const currentCondition = conditionForProbability(weightedCondition(sources.map((source) => ({
+    const currentCondition = weightedCondition(sources.map((source) => ({
       condition: source.current.condition,
       weight: source.weight
-    }))), precip);
+    })));
 
     const hourlyMaps = sources.map((source) => new Map(
       source.hourly.map((hour) => [hourKey(hour.time), hour])
@@ -162,16 +156,10 @@ export async function GET({ url }: RequestEvent) {
           weight: sources[index].weight
         }))),
         windDir: weightedWindDirection(sources, (source) => source.hourly.find((hour) => hourKey(hour.time) === time)!.windDir),
-        condition: conditionForProbability(
-          weightedCondition(hourValues.map((hour, index) => ({
-            condition: hour.condition,
-            weight: sources[index].weight
-          }))),
-          weightedAverage(hourValues.map((hour, index) => ({
-            value: hour.precip,
-            weight: sources[index].weight
-          })))
-        )
+        condition: weightedCondition(hourValues.map((hour, index) => ({
+          condition: hour.condition,
+          weight: sources[index].weight
+        })))
       };
     });
 

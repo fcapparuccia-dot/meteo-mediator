@@ -91,8 +91,7 @@
 
   function weatherIcon(condition: WeatherCondition, temperature: number, night = false, precip?: number): string {
     if (condition === 'storm') return night ? stormNightIcon : stormIcon;
-    if ((condition === 'rain' || condition === 'cloudy') && precip !== undefined) {
-      if (precip <= 20) return night ? clearNightIcon : colorizeSun(clearIcon, temperature);
+    if (condition === 'rain' && precip !== undefined) {
       return rainIconForProbability(precip);
     }
     if (night && condition === 'clear') return clearNightIcon;
