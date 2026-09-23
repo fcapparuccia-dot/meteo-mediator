@@ -1,5 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import clearIcon from '@bybas/weather-icons/production/fill/all/clear-day.svg';
+  import cloudyIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-day.svg';
+  import rainIcon from '@bybas/weather-icons/production/fill/all/rain.svg';
+  import snowIcon from '@bybas/weather-icons/production/fill/all/snow.svg';
+  import stormIcon from '@bybas/weather-icons/production/fill/all/thunderstorms.svg';
 
   type WeatherCondition = 'clear' | 'cloudy' | 'rain' | 'storm' | 'snow';
 
@@ -51,6 +56,18 @@
   let suggestions = $state<CitySuggestion[]>([]);
   let loading = $state(false);
   let suggestionsRequest = 0;
+
+  const weatherIcons: Record<WeatherCondition, string> = {
+    clear: clearIcon,
+    cloudy: cloudyIcon,
+    rain: rainIcon,
+    storm: stormIcon,
+    snow: snowIcon
+  };
+
+  function weatherIcon(condition: WeatherCondition): string {
+    return weatherIcons[condition];
+  }
 
   async function loadForecast(endpoint: string): Promise<void> {
     loading = true;
@@ -284,7 +301,7 @@
             onclick={() => (selectedDay = d)}
           >
             <span class="day-label">{summary.day}</span>
-            <span class="weather-icon weather-icon-{summary.condition}" aria-hidden="true"></span>
+            <img class="weather-icon" src={weatherIcon(summary.condition)} alt="" aria-hidden="true" />
             <span class="day-temperatures">
               <strong>{Math.round(summary.maxTemperature)}°</strong>
               <span>{Math.round(summary.minTemperature)}°</span>
@@ -315,7 +332,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  <span class="weather-icon weather-icon-{h.condition}" aria-label={h.condition}></span>
+                  <img class="weather-icon" src={weatherIcon(h.condition)} alt={h.condition} />
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">
@@ -686,75 +703,11 @@
   }
 
   .weather-icon {
-    position: relative;
     display: inline-block;
-    width: 2.15rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     vertical-align: middle;
-  }
-
-  .weather-icon-clear::before {
-    position: absolute;
-    content: '';
-    inset: 0.42rem;
-    border-radius: 50%;
-    background: #f9b51a;
-    box-shadow: 0 0 0 0.16rem #f59e0b, 0 0 0 0.34rem rgba(245, 158, 11, 0.22);
-  }
-
-  .weather-icon-clear::after {
-    position: absolute;
-    content: '✦';
-    inset: -0.1rem 0 0;
-    color: #f59e0b;
-    font-size: 1.1rem;
-    line-height: 2rem;
-    text-align: center;
-  }
-
-  .weather-icon-cloudy::before,
-  .weather-icon-rain::before,
-  .weather-icon-storm::before,
-  .weather-icon-snow::before {
-    position: absolute;
-    content: '';
-    right: 0.05rem;
-    bottom: 0.22rem;
-    width: 1.65rem;
-    height: 0.7rem;
-    border-radius: 0.7rem;
-    background: #b9c5d5;
-    box-shadow: -0.62rem 0.08rem 0 -0.08rem #d9e1eb, -0.28rem -0.38rem 0 -0.02rem #d9e1eb;
-  }
-
-  .weather-icon-rain::after {
-    position: absolute;
-    content: '⋮ ⋮';
-    right: 0.22rem;
-    bottom: -0.45rem;
-    color: #2384c6;
-    font-size: 1.2rem;
-    letter-spacing: 0.18rem;
-    transform: rotate(18deg);
-  }
-
-  .weather-icon-storm::after {
-    position: absolute;
-    content: '⚡';
-    right: 0.28rem;
-    bottom: -0.38rem;
-    color: #f2a900;
-    font-size: 1.2rem;
-  }
-
-  .weather-icon-snow::after {
-    position: absolute;
-    content: '·  ·';
-    right: 0.08rem;
-    bottom: -0.42rem;
-    color: #5ea7d8;
-    font-size: 1.45rem;
-    letter-spacing: 0.3rem;
+    object-fit: contain;
   }
 
   .wind-arrow {
