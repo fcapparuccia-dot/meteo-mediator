@@ -713,8 +713,8 @@
   .table-weather-icon {
     padding: 0.18rem;
     border-radius: 50%;
-    background: #dcebf4;
-    box-shadow: 0 1px 2px rgba(35, 67, 85, 0.28);
+    background: rgba(232, 244, 255, 0.96);
+    box-shadow: 0 1px 3px rgba(3, 15, 31, 0.42);
   }
 
   .wind-arrow {
@@ -743,20 +743,31 @@
   .weather-app table {
     overflow: hidden;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0.75rem 2rem rgba(22, 45, 61, 0.14);
+    background: #102f4d;
+    box-shadow: 0 0.75rem 2rem rgba(8, 28, 48, 0.28);
     backdrop-filter: blur(8px);
   }
 
   .weather-app th {
-    color: #183244;
+    color: #f4f8ff !important;
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.96);
+    background: #0b2742;
+    border-bottom-color: #527594 !important;
   }
 
   .weather-app td {
+    color: #eaf3ff !important;
     font-weight: 600;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+    text-shadow: none;
+    border-bottom-color: #2d5271 !important;
+  }
+
+  .weather-app tbody tr:nth-child(even) {
+    background: #163b5d;
+  }
+
+  .weather-app tbody tr:hover {
+    background: #1d4b70;
   }
 
   @media (max-width: 640px) {
