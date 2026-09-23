@@ -64,6 +64,7 @@
   let data = $state<ForecastData | null>(null);
   let days = $state<string[]>([]);
   let selectedDay = $state<string | null>(null);
+  let showHourly = $state(false);
   let error = $state<string | null>(null);
   let city = $state('Pisa');
   let suggestions = $state<CitySuggestion[]>([]);
@@ -138,6 +139,7 @@
 
       days = Array.from(uniqueDays);
       selectedDay = days[0] ?? null;
+      showHourly = false;
     } catch {
       error = 'Non è stato possibile caricare la previsione.';
     } finally {
@@ -287,6 +289,11 @@
     return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
+  function dayLabel(day: string, index: number): string {
+    if (index === 0) return 'Oggi';
+    return formatDay(day).replace(/\s+\w+\s+\d{4}$/, '');
+  }
+
   // ⭐ Colore dinamico temperatura
   function tempColor(t: number): string {
     if (t >= 30) return '#c2410c';
@@ -363,19 +370,23 @@
     <p>{loading ? 'Carico la previsione…' : 'Nessuna previsione disponibile.'}</p>
   {:else}
     <section>
-      <h2>Previsione oraria per {data.location}</h2>
+      <h2>Previsioni meteo per {data.location}</h2>
 
       <div class="day-selector">
-        {#each days as d}
+        {#each days as d, index}
           {@const summary = dailyForecast(d)}
           <button
             type="button"
             class:active={selectedDay === d}
             class="day-pill"
-            aria-pressed={selectedDay === d}
-            onclick={() => (selectedDay = d)}
+            aria-controls="hourly-forecast"
+            aria-expanded={showHourly && selectedDay === d}
+            onclick={() => {
+              selectedDay = d;
+              showHourly = true;
+            }}
           >
-            <span class="day-label">{summary.day}</span>
+            <span class="day-label">{dayLabel(d, index)}</span>
             <span class="weather-icon" aria-hidden="true">{@html weatherIcon(summary.condition, summary.maxTemperature)}</span>
             <span class="day-temperatures">
               <strong>{Math.round(summary.maxTemperature)}°</strong>
@@ -384,9 +395,14 @@
           </button>
         {/each}
       </div>
-      <p class="swipe-hint">Scorri le schede per vedere gli altri giorni</p>
+      {#if !showHourly}
+        <p class="day-selection-hint">Seleziona un giorno per vedere la previsione oraria</p>
+      {/if}
 
-      <div class="forecast-table-wrapper">
+      {#if showHourly}
+        <div id="hourly-forecast" class="hourly-forecast">
+          <h3>Previsione oraria: {selectedDay ? dayLabel(selectedDay, days.indexOf(selectedDay)) : ''}</h3>
+          <div class="forecast-table-wrapper">
         <table>
           <thead>
             <tr>
@@ -430,8 +446,10 @@
             {/each}
           </tbody>
         </table>
-      </div>
-      <p class="swipe-hint table-hint">Scorri la tabella lateralmente per vedere tutti i dati</p>
+          </div>
+          <p class="swipe-hint table-hint">Scorri la tabella lateralmente per vedere tutti i dati</p>
+        </div>
+      {/if}
     </section>
   {/if}
 </div>
@@ -653,8 +671,8 @@
 
   .day-selector {
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0.65rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
     margin: 1rem 0;
     width: 100%;
     max-width: 52.9rem;
@@ -663,12 +681,13 @@
   .day-pill {
     appearance: none;
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 0.35rem;
+    grid-template-columns: minmax(0, 1fr) 3rem minmax(6rem, 1fr);
+    align-items: center;
+    gap: 0.75rem;
     width: 100%;
     min-width: 0;
-    min-height: 8rem;
-    padding: 0.65rem 0.5rem;
+    min-height: 4.5rem;
+    padding: 0.55rem 1rem;
     border-radius: 8px;
     border: 1px solid #2d5271;
     font: inherit;
@@ -687,6 +706,12 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
+  }
+
+  .hourly-forecast h3 {
+    margin: 1.5rem 0 0.75rem;
+    color: #12354a;
+    font-size: 1rem;
   }
 
   .forecast-table-wrapper table {
@@ -748,6 +773,12 @@
     font-size: 0.75rem;
   }
 
+  .day-selection-hint {
+    margin: 0.75rem 0 1rem;
+    color: #38566a;
+    font-size: 0.85rem;
+  }
+
   .day-pill:hover {
     background: #1d4b70;
     border-color: #527594;
@@ -761,8 +792,8 @@
   }
 
   .day-label {
-    font-size: 0.9rem;
-    white-space: nowrap;
+    font-size: 1rem;
+    text-align: left;
   }
 
   .day-icon {
@@ -777,6 +808,8 @@
     justify-content: center;
     gap: 0.55rem;
     font-size: 0.9rem;
+    white-space: nowrap;
+    text-align: right;
   }
 
   .day-temperatures span {
@@ -895,8 +928,8 @@
     }
 
     .day-selector {
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 0.25rem;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.4rem;
       max-width: none;
     }
 
@@ -910,12 +943,12 @@
 
     .day-pill {
       width: 100%;
-      min-height: 6.8rem;
-      padding: 0.5rem 0.15rem;
+      min-height: 4.25rem;
+      padding: 0.45rem 0.75rem;
     }
 
     .day-label {
-      font-size: 0.7rem;
+      font-size: 0.9rem;
     }
 
     .day-icon {
