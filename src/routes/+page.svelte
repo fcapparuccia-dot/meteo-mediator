@@ -84,20 +84,25 @@
   }
 
   function rainIconForProbability(precip: number): string {
-    if (precip <= 20) return rainCloudOneIcon;
+    if (precip <= 40) return rainCloudOneIcon;
     if (precip <= 60) return rainCloudTwoIcon;
     return rainCloudThreeIcon;
   }
 
-  function weatherIcon(condition: WeatherCondition, temperature: number, night = false, precip = 0): string {
+  function weatherIcon(condition: WeatherCondition, temperature: number, night = false, precip?: number): string {
     if (condition === 'storm') return night ? stormNightIcon : stormIcon;
-    if ((condition === 'rain' || condition === 'cloudy') && precip > 0) {
+    if ((condition === 'rain' || condition === 'cloudy') && precip !== undefined) {
+      if (precip <= 20) return night ? clearNightIcon : colorizeSun(clearIcon, temperature);
       return rainIconForProbability(precip);
     }
     if (night && condition === 'clear') return clearNightIcon;
     if (night && condition === 'cloudy') return cloudyNightIcon;
     if (condition !== 'clear' && condition !== 'cloudy') return weatherIcons[condition];
 
+    return colorizeSun(weatherIcons[condition], temperature);
+  }
+
+  function colorizeSun(icon: string, temperature: number): string {
     const colors = temperature <= 5
       ? { main: '#b8e7ff', highlight: '#e7f8ff', edge: '#78c9ef' }
       : temperature <= 10
@@ -109,8 +114,7 @@
             : temperature <= 30
               ? { main: '#fb923c', highlight: '#f97316', edge: '#ea580c' }
               : { main: '#ef4444', highlight: '#f87171', edge: '#b91c1c' };
-
-    return weatherIcons[condition]
+    return icon
       .replaceAll('#fbbf24', colors.main)
       .replaceAll('#f59e0b', colors.highlight)
       .replaceAll('#f8af18', colors.edge);
