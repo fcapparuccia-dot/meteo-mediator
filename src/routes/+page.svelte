@@ -4,8 +4,9 @@
   import clearNightIcon from '@bybas/weather-icons/production/fill/all/clear-night.svg?raw';
   import cloudyIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-day.svg?raw';
   import cloudyNightIcon from '@bybas/weather-icons/production/fill/all/partly-cloudy-night.svg?raw';
-  import raindropIcon from '@bybas/weather-icons/production/fill/all/raindrop.svg?raw';
-  import raindropsIcon from '@bybas/weather-icons/production/fill/all/raindrops.svg?raw';
+  import rainCloudOneIcon from '$lib/assets/partly-cloudy-rain-1.svg?raw';
+  import rainCloudTwoIcon from '$lib/assets/partly-cloudy-rain-2.svg?raw';
+  import rainCloudThreeIcon from '$lib/assets/partly-cloudy-rain-3.svg?raw';
   import rainIcon from '@bybas/weather-icons/production/fill/all/rain.svg?raw';
   import snowIcon from '@bybas/weather-icons/production/fill/all/snow.svg?raw';
   import stormIcon from '@bybas/weather-icons/production/fill/all/thunderstorms.svg?raw';
@@ -83,9 +84,9 @@
   }
 
   function rainIconForProbability(precip: number): string {
-    if (precip <= 20) return raindropIcon;
-    if (precip <= 60) return raindropsIcon;
-    return rainIcon;
+    if (precip <= 20) return rainCloudOneIcon;
+    if (precip <= 60) return rainCloudTwoIcon;
+    return rainCloudThreeIcon;
   }
 
   function weatherIcon(condition: WeatherCondition, temperature: number, night = false, precip = 0): string {
