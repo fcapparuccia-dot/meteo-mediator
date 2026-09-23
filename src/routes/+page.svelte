@@ -332,7 +332,7 @@
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                  <img class="weather-icon" src={weatherIcon(h.condition)} alt={h.condition} />
+                  <img class="weather-icon table-weather-icon" src={weatherIcon(h.condition)} alt={h.condition} />
                 </td>
 
                 <td style="padding: 8px; border-bottom: 1px solid #eee; color: {tempColor(h.temperature)};">
@@ -708,6 +708,13 @@
     height: 2.5rem;
     vertical-align: middle;
     object-fit: contain;
+  }
+
+  .table-weather-icon {
+    padding: 0.18rem;
+    border-radius: 50%;
+    background: #dcebf4;
+    box-shadow: 0 1px 2px rgba(35, 67, 85, 0.28);
   }
 
   .wind-arrow {
