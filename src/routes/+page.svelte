@@ -652,10 +652,11 @@
   }
 
   .day-selector {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0.65rem;
     margin: 1rem 0;
-    flex-wrap: wrap;
+    width: 100%;
     max-width: 52.9rem;
   }
 
@@ -664,7 +665,8 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     gap: 0.35rem;
-    width: 7rem;
+    width: 100%;
+    min-width: 0;
     min-height: 8rem;
     padding: 0.65rem 0.5rem;
     border-radius: 8px;
@@ -700,6 +702,12 @@
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;
+  }
+
+  .forecast-table-wrapper th {
+    white-space: normal;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
   }
 
   .forecast-table-wrapper th:nth-child(1),
@@ -887,13 +895,9 @@
     }
 
     .day-selector {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.25rem;
       max-width: none;
-      flex-wrap: nowrap;
-      margin-right: -0.75rem;
-      padding-right: 0.75rem;
-      overflow-x: auto;
-      scroll-snap-type: x proximity;
-      -webkit-overflow-scrolling: touch;
     }
 
     .swipe-hint {
@@ -905,14 +909,13 @@
     }
 
     .day-pill {
-      flex: 0 0 5.35rem;
-      width: 5.35rem;
+      width: 100%;
       min-height: 6.8rem;
-      scroll-snap-align: start;
+      padding: 0.5rem 0.15rem;
     }
 
     .day-label {
-      font-size: 0.78rem;
+      font-size: 0.7rem;
     }
 
     .day-icon {
@@ -967,7 +970,12 @@
     .forecast-table-wrapper th,
     .forecast-table-wrapper td {
       padding: 0.35rem 0.15rem !important;
-      white-space: nowrap;
+    }
+
+    .forecast-table-wrapper th {
+      font-size: 0.58rem;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     .forecast-table-wrapper th:nth-child(1),
