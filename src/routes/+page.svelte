@@ -593,12 +593,12 @@
     min-height: 8rem;
     padding: 0.65rem 0.5rem;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #2d5271;
     font: inherit;
     cursor: pointer;
     user-select: none;
-    background: #f7f7f7;
-    color: #333;
+    background: #102f4d;
+    color: #eaf3ff;
     text-align: center;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
@@ -650,7 +650,8 @@
     position: sticky;
     left: 0;
     z-index: 1;
-    background: rgba(255, 255, 255, 0.96);
+    background: #102f4d !important;
+    color: #eaf3ff !important;
   }
 
   .forecast-table-wrapper th:first-child {
@@ -665,7 +666,8 @@
   }
 
   .day-pill:hover {
-    background: #eaeaea;
+    background: #1d4b70;
+    border-color: #527594;
   }
 
   .day-pill.active {
@@ -711,10 +713,9 @@
   }
 
   .table-weather-icon {
-    padding: 0.18rem;
-    border-radius: 50%;
-    background: rgba(232, 244, 255, 0.96);
-    box-shadow: 0 1px 3px rgba(3, 15, 31, 0.42);
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .wind-arrow {
